@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Афиша культуры Башкортостана</title>
+<style>
+:root{
+  --bg:#f7f4ec; --card:#fffdf8; --ink:#2b3440; --muted:#66727f;
+  --accent:#3d7a5f; --accent2:#2f5f8a; --gold:#c9a24d; --line:#e8e2d6;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);line-height:1.45;
+ background:#f7f4ec;
+ background-image:
+   radial-gradient(900px 520px at 85% -120px, rgba(126,172,112,.16), transparent 70%),
+   radial-gradient(900px 520px at -10% 30%, rgba(110,152,204,.13), transparent 70%),
+   linear-gradient(180deg,#faf8f2 0%,#f4f0e6 100%);
+ background-attachment:fixed}
+a{color:var(--accent2)}
+header{background:linear-gradient(120deg,#2f5d86 0%,#3f7d63 100%);color:#fff;padding:18px 20px;box-shadow:0 2px 16px rgba(43,52,64,.14)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+.hrow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:.2px}
+.logo svg{width:38px;height:38px;flex:none}
+.sub{font-size:12.5px;opacity:.85;max-width:520px}
+.badge-demo{margin-left:auto;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:6px 14px;font-size:12px}
+.demo-note{background:#fff8e6;border:1px solid #f0dfa8;color:#6b5410;font-size:13px;padding:8px 14px;border-radius:10px;margin:12px auto 0;max-width:1148px}
+.filters{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-top:16px;display:grid;gap:10px}
+.f-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.f-input{padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#fff;color:var(--ink);min-width:0}
+.f-input:focus{outline:2px solid var(--accent2);outline-offset:1px}
+#q{flex:1 1 220px}
+select.f-input{max-width:200px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px;font-size:13px;cursor:pointer;color:var(--ink)}
+.chip:hover{border-color:var(--accent2)}
+.chip.on{background:var(--accent2);border-color:var(--accent2);color:#fff}
+label.chk{display:flex;gap:7px;align-items:center;font-size:13px;color:var(--muted);cursor:pointer}
+.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 10px}
+.count{font-size:14px;color:var(--muted)}
+.sp{flex:1}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 14px;font-size:13.5px;cursor:pointer;color:var(--ink)}
+.btn:hover{border-color:var(--accent2);color:var(--accent2)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-primary:hover{background:#175a44;color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;padding-bottom:8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:9px;cursor:pointer;transition:box-shadow .15s, transform .15s}
+.card:hover{box-shadow:0 6px 18px rgba(43,52,64,.10);transform:translateY(-2px)}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:11.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:#faf8f4}
+.tag.cat-концерт{background:#e8f0fb;border-color:#c3d8f2;color:#2a4d7a}
+.tag.cat-спектакль{background:#f7ecfa;border-color:#e3c9ee;color:#6d3a86}
+.tag.cat-выставка{background:#fdf3e3;border-color:#f0ddaf;color:#8a6212}
+.tag.cat-фестиваль{background:#e8f7ef;border-color:#bfe4cf;color:#1e6b52}
+.tag.cat-другое{background:#f0f0f2;border-color:#d9d9de;color:#4a4a55}
+.card h3{font-size:16.5px;line-height:1.3}
+.meta{font-size:13.5px;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:600}
+.price{font-weight:700;color:var(--accent)}
+.price.free{color:#1e6b52}
+.card-foot{margin-top:auto;display:flex;gap:8px;align-items:center;padding-top:6px;border-top:1px dashed var(--line)}
+.more{color:var(--accent2);font-size:13.5px;font-weight:600;background:none;border:none;cursor:pointer;padding:0}
+.empty{background:var(--card);border:1px dashed var(--line);border-radius:var(--radius);padding:28px;text-align:center;color:var(--muted)}
+.empty h3{color:var(--ink);margin-bottom:8px}
+.empty ul{text-align:left;display:inline-block;margin-top:10px;font-size:14px}
+.empty li{margin:4px 0}
+.empty button{margin-top:14px}
+.load{display:block;margin:14px auto 28px}
+footer{border-top:1px solid var(--line);background:transparent;padding:18px 0 26px;margin-top:28px;font-size:13px;color:var(--muted)}
+footer h4{color:var(--ink);margin-bottom:8px}
+.disclaimer{margin-top:14px;font-size:12.5px;color:#8a6212;background:#fff8e6;border-radius:8px;padding:8px 12px;border:1px solid #f0dfa8}
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(15,34,51,.5);display:none;align-items:flex-start;justify-content:center;padding:4vh 14px;overflow:auto;z-index:50}
+.overlay.open{display:flex}
+.modal{background:var(--card);border-radius:16px;max-width:640px;width:100%;padding:24px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal .close{position:absolute;top:12px;right:12px;border:none;background:#f1efe9;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px}
+.modal h2{font-size:20px;margin-bottom:4px;padding-right:36px}
+.m-row{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0;font-size:14px}
+.k{color:var(--muted);min-width:92px}
+.m-desc{margin:10px 0;padding:12px;background:#faf8f4;border-radius:10px;font-size:14px}
+.src-link{display:inline-block;margin-top:8px;font-size:13.5px}
+.modal-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+/* subscriptions */
+.subs-panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-top:12px;display:none}
+.subs-panel.open{display:block}
+.sub-item{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.sub-item:last-child{border-bottom:none}
+/* widget mode */
+body.widget header, body.widget footer, body.widget .demo-note, body.widget .wshow,
+body.widget .toolbar .btn-primary, body.widget .subs-panel{display:none!important}
+body.widget{background:#fffdf8}
+body.widget .card{border:none;box-shadow:0 1px 6px rgba(43,52,64,.07)}
+body.w2 select.f-input, body.w2 label.chk, body.w2 #d, body.w2 .toolbar .btn{display:none}
+body.w2 .grid{grid-template-columns:1fr;max-width:560px;margin:0 auto}
+body.w3 .filters, body.w3 .toolbar, body.w3 .grid, body.w3 #empty, body.w3 .load{display:none!important}
+#w3slot{margin-top:16px}
+/* витрина виджетов */
+.wshow{margin-top:34px}
+.wshow h2{font-size:22px;margin-bottom:4px}
+.wsub{color:var(--muted);font-size:14px;margin-bottom:14px}
+.wblock{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+.wblock h3{font-size:16px;margin-bottom:4px}
+.wblock>p{font-size:13.5px;color:var(--muted);margin-bottom:12px}
+.wshell{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fbf9f3}
+.wmini{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.wmini .card{padding:12px;gap:6px}
+.wfeed{display:flex;flex-direction:column;gap:10px;max-width:560px;margin:0 auto}
+.wfeed .card{padding:12px}
+.wfeedtop{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.wfeedtop .wcount{font-size:12.5px;color:var(--muted);width:100%}
+.wcar{overflow:hidden;width:100%}
+.wtrack>.card{flex:0 0 100%;min-width:0;box-sizing:border-box;touch-action:pan-y;user-select:none}
+.wtrack>.card .card-foot{margin-top:auto}
+.wtrack{display:flex;transition:transform .45s ease}
+.wslide{flex:0 0 100%;padding:2px}
+.wnav{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px}
+.warrow{border:1px solid var(--line);background:#fff;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:15px;color:var(--ink)}
+.warrow:hover{border-color:var(--accent2)}
+.wdot{width:9px;height:9px;border-radius:50%;border:none;background:#d9d3c5;cursor:pointer;padding:0}
+.wdot.on{background:var(--accent2)}
+.wempty{color:var(--muted);font-size:14px;text-align:center;padding:16px}
+@media (prefers-reduced-motion: reduce){.wtrack{transition:none}}
+:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+@media(max-width:640px){
+ .badge-demo{margin-left:0}
+ .grid{grid-template-columns:1fr}
+ .modal{padding:18px}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="wrap hrow">
+  <div class="logo">
+   <svg viewBox="0 0 40 40" aria-hidden="true"><g fill="none" stroke="#ffd98a" stroke-width="2.4" stroke-linecap="round"><path d="M20 33 V15"/><path d="M20 15 C20 9 15 8 13 12"/><path d="M20 15 C20 9 25 8 27 12"/><path d="M20 17 C17 13 13 14 13 18"/><path d="M20 17 C23 13 27 14 27 18"/></g><circle cx="20" cy="33" r="3" fill="#ffd98a"/></svg>
+   <span>Афиша культуры Башкортостана</span>
+  </div>
+  <div class="sub">Концерты, спектакли, выставки и фестивали республики. Поиск по фильтрам: город, дата, цена, возраст.</div>
+  <span class="badge-demo">Демо-Версия</span>
+ </div>
+</header>
+
+<div class="wrap">
+ <div class="demo-note">Демонстрационный прототип. Данные — реальная афиша из открытых источников (филармония, ГКЗ «Башкортостан», билетные операторы, афиши городов)</div>
+
+ <section class="filters" aria-label="Фильтры поиска">
+  <div class="f-row">
+   <input id="q" class="f-input" type="search" placeholder="Поиск: название, площадка, исполнитель…" aria-label="Поиск по афише">
+   <select id="city" class="f-input" aria-label="Город"><option value="">Все города</option></select>
+   <select id="cat" class="f-input" aria-label="Категория"><option value="">Все категории</option></select>
+   <select id="price" class="f-input" aria-label="Цена">
+    <option value="">Любая цена</option><option value="free">Бесплатно</option>
+    <option value="500">До 500 ₽</option><option value="1000">До 1 000 ₽</option><option value="3000">До 3 000 ₽</option>
+   </select>
+   <select id="age" class="f-input" aria-label="Возрастное ограничение">
+    <option value="">Любой возраст</option><option value="0">Подойдёт для 0+</option>
+    <option value="6">Подойдёт для 6+</option><option value="12">Подойдёт для 12+</option><option value="16">Подойдёт для 16+</option>
+   </select>
+   <select id="sort" class="f-input" aria-label="Сортировка">
+    <option value="date">Сначала ближайшие</option><option value="price">Сначала дешевле</option><option value="title">По названию</option>
+   </select>
+  </div>
+  <div class="f-row">
+   <div class="chips" id="dateChips" role="group" aria-label="Период">
+    <button class="chip on" data-d="">Всё время</button>
+    <button class="chip" data-d="today">Сегодня</button>
+    <button class="chip" data-d="tomorrow">Завтра</button>
+    <button class="chip" data-d="weekend">Выходные</button>
+    <button class="chip" data-d="week">Неделя</button>
+    <input id="d" class="f-input" type="date" aria-label="Конкретная дата" style="max-width:170px">
+   </div>
+   <label class="chk"><input type="checkbox" id="past" checked> Показывать прошедшие</label>
+  </div>
+ </section>
+
+ <div class="toolbar">
+  <span class="count" id="count" aria-live="polite"></span>
+  <span class="sp"></span>
+  <button class="btn" id="shareBtn" title="Скопировать ссылку с текущими фильтрами">🔗 Поделиться подборкой</button>
+  <button class="btn btn-primary" id="subBtn">★ Подписаться на подборку</button>
+  <button class="btn" id="subsBtn" aria-expanded="false">Мои подписки</button>
+ </div>
+
+ <div class="subs-panel" id="subsPanel">
+  <h4 style="margin-bottom:6px">Подписки</h4>
+  <div id="subsList"></div>
+  <div style="font-size:12.5px;color:var(--muted);margin-top:6px"></div>
+ </div>
+
+ <section class="grid" id="grid" aria-label="События"></section>
+ <div id="empty" class="empty" style="display:none"></div>
+ <button class="btn load" id="moreBtn" style="display:none">Показать ещё</button>
+ <div id="w3slot" style="display:none"></div>
+</div>
+
+<section class="wshow wrap" id="wshow" aria-label="Витрина виджетов">
+ <h2>Концерты Башкортостана</h2>
+ <p class="wsub"></p>
+
+ <div class="wblock">
+  <h3>Виджет 1 — полный каталог</h3>
+  <p>Все фильтры, поиск и пагинация в сжатом виде — без шапки и подписок.</p>
+  <div class="wshell"><div class="wmini" id="w1grid"></div></div>
+ </div>
+
+ <div class="wblock">
+  <h3>Лента событий</h3>
+  <p></p>
+  <div class="wshell">
+   <div class="wfeedtop">
+    <input id="w2q" class="f-input" type="search" placeholder="Поиск: название, площадка…" aria-label="Поиск в виджете">
+    <div class="chips" id="w2chips" role="group" aria-label="Период в виджете">
+     <button class="chip on" data-d="">Всё время</button>
+     <button class="chip" data-d="today">Сегодня</button>
+     <button class="chip" data-d="weekend">Выходные</button>
+     <button class="chip" data-d="week">Неделя</button>
+    </div>
+    <div class="wcount" id="w2count" aria-live="polite"></div>
+   </div>
+   <div class="wfeed" id="w2feed"></div>
+  </div>
+ </div>
+
+ <div class="wblock">
+  <h3>Карусель ближайших событий</h3>
+  <p></p>
+  <div class="wshell" id="w3demo"></div>
+ </div>
+</section>
+<footer>
+ <div class="wrap">
+  <div class="disclaimer"></div>
+ </div>
+</footer>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Карточка события">
+ <div class="modal" id="modal"></div>
+</div>
+
+<script>
+const EVENTS = [{"t": "Красная шапочка", "cat": "спектакль", "tags": ["дети", "кукольный театр"], "ds": "2026-11-14T12:00:00+05:00", "city": "Уфа", "venue": "Башкирский государственный театр кукол", "addr": "пр. Октября, 158", "pmin": 500, "pmax": 500, "free": false, "age": 0, "desc": "Сказка для всей семьи в постановке Башкирского государственного театра кукол.", "src": ["Куда Уфа", "https://kudaufa.ru/event/krasnaya-shapochka-ufa-2026-11-14/"], "id": 1, "norm": "красная шапочка"}, {"t": "Авторский вечер Азамата Хасаншина", "cat": "концерт", "tags": ["академическая музыка"], "ds": "2026-11-14T18:00:00+05:00", "city": "Уфа", "venue": "Башкирская государственная филармония им. Х. Ахметова", "addr": "ул. Гоголя, 58", "pmin": 600, "pmax": 800, "free": false, "age": 6, "desc": "Ансамбль старинной и современной музыки OPUS в Большом зале филармонии.", "src": ["Башгосфилармония", "https://bashgf.ru/afisha/"], "id": 2, "norm": "авторский вечер азамата хасаншина"}, {"t": "Пятницы Абеля («Соло для часов с боем»)", "cat": "спектакль", "tags": ["драма"], "ds": "2026-11-14T18:00:00+05:00", "city": "Уфа", "venue": "ГКЗ «Башкортостан»", "addr": "ул. Ленина, 50", "pmin": null, "pmax": null, "free": false, "age": 12, "desc": "Спектакль по пьесе Освальда Заградника — канун 45-летия образования зала.", "src": ["ГКЗ «Башкортостан»", "https://gkzbashkortostan.ru/afisha/"], "id": 3, "norm": "пятницы абеля («соло для часов с боем»)"}, {"t": "Севак (Sevak)", "cat": "концерт", "tags": ["поп"], "ds": "2026-11-14T19:00:00+05:00", "city": "Уфа", "venue": "РК «Огни Уфы»", "addr": "", "pmin": 2000, "pmax": null, "free": false, "age": 12, "desc": "Концерт певца Sevak.", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 4, "norm": "севак (sevak)"}, {"t": "Гала-концерт студии «Дива» (юбилейный вечер)", "cat": "концерт", "tags": ["бесплатно", "вокал"], "ds": "2026-11-15T17:00:00+05:00", "city": "Уфа", "venue": "ГКЗ «Башкортостан»", "addr": "ул. Ленина, 50", "pmin": 0, "pmax": 0, "free": true, "age": 0, "desc": "Особенный вечер к юбилею студии, вход свободный.", "src": ["ГКЗ «Башкортостан»", "https://gkzbashkortostan.ru/afisha/"], "id": 5, "norm": "гала-концерт студии «дива» (юбилейный вечер)"}, {"t": "Кубанский казачий хор «Нам — 215 лет!»", "cat": "концерт", "tags": ["фолк", "народная музыка"], "ds": "2026-11-16T19:00:00+05:00", "city": "Уфа", "venue": "ГДК «Уфа»", "addr": "пр. Октября, 137", "pmin": 1200, "pmax": null, "free": false, "age": 6, "desc": "Гастрольный концерт старейшего коллектива народной песни.", "src": ["Афиша", "https://www.afisha.ru/ufa/events/na-noyabr/"], "id": 6, "norm": "кубанский казачий хор «нам — 215 лет!»"}, {"t": "Республиканский фестиваль «Семейный очаг» (Ғаилә усағы)", "cat": "фестиваль", "tags": ["бесплатно", "семейное", "башкирский язык"], "ds": "2026-11-16T12:00:00+05:00", "city": "Уфа", "venue": "ГКЗ «Башкортостан»", "addr": "ул. Ленина, 50", "pmin": 0, "pmax": 0, "free": true, "age": 0, "desc": "Фестиваль-конкурс культур и традиций семьи, вход свободный.", "src": ["ГКЗ «Башкортостан»", "https://gkzbashkortostan.ru/afisha/"], "id": 7, "norm": "республиканский фестиваль «семейный очаг» (ғаилә усағы)"}, {"t": "Акъял батыр", "cat": "спектакль", "tags": ["дети", "башкирский язык"], "ds": "2026-11-16T14:00:00+05:00", "city": "Сибай", "venue": "Сибайское концертно-театральное объединение", "addr": "", "pmin": 300, "pmax": null, "free": false, "age": 0, "desc": "Спектакль Сибайского КТО для детской аудитории.", "src": ["Ticketland", "https://ufa.ticketland.ru/afisha/november/"], "id": 8, "norm": "акъял батыр"}, {"t": "Фестиваль «Музыка, рожденная ветром» (НОНИ РБ)", "cat": "фестиваль", "tags": ["этно", "курай"], "ds": "2026-11-18T19:00:00+05:00", "city": "Уфа", "venue": "Башкирская государственная филармония им. Х. Ахметова", "addr": "ул. Гоголя, 58", "pmin": 600, "pmax": 1200, "free": false, "age": 6, "desc": "VI Международный этнический фестиваль: Ринат Мухаметзянов, Ришат Рахимов, мультиинструменталисты, группа «Узорица».", "src": ["Башгосфилармония", "https://bashgf.ru/afisha/"], "id": 9, "norm": "фестиваль «музыка, рожденная ветром» (нони рб)"}, {"t": "Балет «Дон Кихот»", "cat": "спектакль", "tags": ["балет"], "ds": "2026-11-18T19:00:00+05:00", "city": "Уфа", "venue": "Башкирский государственный театр оперы и балета", "addr": "ул. Ленина, 5", "pmin": 350, "pmax": null, "free": false, "age": 12, "desc": "Классический балет на сцене Башкирского театра оперы и балета.", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 10, "norm": "балет «дон кихот»"}, {"t": "Смерть Тарелкина", "cat": "спектакль", "tags": ["комедия", "классика"], "ds": "2026-11-19T19:00:00+05:00", "city": "Уфа", "venue": "Государственный академический русский драматический театр РБ", "addr": "ул. Ленина, 35", "pmin": 750, "pmax": null, "free": false, "age": 16, "desc": "Пьеса А. В. Сухово-Кобылина на большой сцене русского драмтеатра.", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 11, "norm": "смерть тарелкина"}, {"t": "Снег", "cat": "спектакль", "tags": ["драма"], "ds": "2026-11-19T19:00:00+05:00", "city": "Уфа", "venue": "УГТТ «Нур»", "addr": "ул. Правды, 20", "pmin": null, "pmax": null, "free": false, "age": 12, "desc": "Спектакль-размышление о жизни и смерти в условном пространстве.", "src": ["Куда Уфа", "https://kudaufa.ru/event/all/month/"], "id": 12, "norm": "снег"}, {"t": "Гарнир по-французски", "cat": "спектакль", "tags": ["комедия"], "ds": "2026-11-19T19:00:00+05:00", "city": "Уфа", "venue": "Национальный молодежный театр им. Мустая Карима", "addr": "ул. Ленина, 62", "pmin": 900, "pmax": null, "free": false, "age": 16, "desc": "Комедийная постановка Национального молодежного театра.", "src": ["Ticketland", "https://ufa.ticketland.ru/afisha/november/"], "id": 13, "norm": "гарнир по-французски"}, {"t": "Фестиваль-конкурс «Идель» (татарская и башкирская песня)", "cat": "фестиваль", "tags": ["татарский язык", "башкирский язык"], "ds": "2026-11-20T18:00:00+05:00", "city": "Уфа", "venue": "ГКЗ «Башкортостан»", "addr": "ул. Ленина, 50", "pmin": null, "pmax": null, "free": false, "age": 0, "desc": "XVI Международный фестиваль-конкурс; вход по пригласительным.", "src": ["ГКЗ «Башкортостан»", "https://gkzbashkortostan.ru/afisha/"], "id": 14, "norm": "фестиваль-конкурс «идель» (татарская и башкирская песня)"}, {"t": "Вовка в Тридевятом царстве", "cat": "спектакль", "tags": ["дети"], "ds": "2026-11-20T14:00:00+05:00", "city": "Сибай", "venue": "Сибайское концертно-театральное объединение", "addr": "", "pmin": 300, "pmax": null, "free": false, "age": 0, "desc": "Детский спектакль Сибайского КТО.", "src": ["Ticketland", "https://ufa.ticketland.ru/afisha/november/"], "id": 15, "norm": "вовка в тридевятом царстве"}, {"t": "Фирдус Тямаев", "cat": "концерт", "tags": ["поп", "татарский язык"], "ds": "2026-11-20T19:00:00+05:00", "city": "Уфа", "venue": "Дворец молодежи", "addr": "ул. 50-летия Октября, 21", "pmin": 1200, "pmax": null, "free": false, "age": 12, "desc": "Концерт народного артиста РБ Фирдуса Тямаева.", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 16, "norm": "фирдус тямаев"}, {"t": "PlusFive (а капелла)", "cat": "концерт", "tags": ["вокал"], "ds": "2026-11-20T19:00:00+05:00", "city": "Уфа", "venue": "Башкирская государственная филармония им. Х. Ахметова", "addr": "ул. Гоголя, 58", "pmin": 800, "pmax": 1800, "free": false, "age": 6, "desc": "А капелла-группа PlusFive (Санкт-Петербург) в Большом зале.", "src": ["Башгосфилармония", "https://bashgf.ru/afisha/"], "id": 17, "norm": "plusfive (а капелла)"}, {"t": "Снежная королева", "cat": "спектакль", "tags": ["дети", "кукольный театр"], "ds": "2026-11-21T15:00:00+05:00", "city": "Уфа", "venue": "Башкирский государственный театр кукол", "addr": "пр. Октября, 158", "pmin": 500, "pmax": 500, "free": false, "age": 0, "desc": "Знаменитая сказка Г. Х. Андерсена на сцене театра кукол.", "src": ["Куда Уфа", "https://kudaufa.ru/event/snezhnaya-koroleva-ufa-2026-11-21/"], "id": 18, "norm": "снежная королева"}, {"t": "Балет «Щелкунчик»", "cat": "спектакль", "tags": ["балет", "дети"], "ds": "2026-11-21T19:00:00+05:00", "city": "Уфа", "venue": "Башкирский государственный театр оперы и балета", "addr": "ул. Ленина, 5", "pmin": 5000, "pmax": null, "free": false, "age": 6, "desc": "Новогодний классический балет П. И. Чайковского.", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 19, "norm": "балет «щелкунчик»"}, {"t": "Фестиваль «Татар жыры»", "cat": "концерт", "tags": ["татарский язык"], "ds": "2026-11-21T18:00:00+05:00", "city": "Уфа", "venue": "Уфа-Арена", "addr": "ул. Ленина, 114", "pmin": 1500, "pmax": null, "free": false, "age": 6, "desc": "Большой фестиваль татарской эстрады.", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 20, "norm": "фестиваль «татар жыры»"}, {"t": "Двойной юбилейный вечер Гали Алтынбаева и Назифы Кадыровой", "cat": "концерт", "tags": ["башкирский язык"], "ds": "2026-11-21T18:00:00+05:00", "city": "Уфа", "venue": "Башкирская государственная филармония им. Х. Ахметова", "addr": "ул. Гоголя, 58", "pmin": 600, "pmax": 1200, "free": false, "age": 6, "desc": "Юбилейные концерты известных композиторов Башкортостана.", "src": ["Башгосфилармония", "https://bashgf.ru/afisha/"], "id": 21, "norm": "двойной юбилейный вечер гали алтынбаева и назифы кадыровой"}, {"t": "Ансамбль русских народных инструментов «Забава»", "cat": "концерт", "tags": ["бесплатно", "народная музыка", "дети"], "ds": "2026-11-21T11:00:00+05:00", "city": "Уфа", "venue": "Башкирская государственная филармония им. Х. Ахметова", "addr": "ул. Гоголя, 58", "pmin": 0, "pmax": 0, "free": true, "age": 0, "desc": "Утренник ансамбля «Забава», вход свободный.", "src": ["Башгосфилармония", "https://bashgf.ru/afisha/"], "id": 22, "norm": "ансамбль русских народных инструментов «забава»"}, {"t": "Трибьют-шоу Michael Jackson", "cat": "концерт", "tags": ["поп"], "ds": "2026-11-22T19:00:00+05:00", "city": "Уфа", "venue": "ГКЗ «Башкортостан»", "addr": "ул. Ленина, 50", "pmin": null, "pmax": null, "free": false, "age": 12, "desc": "Трибьют-шоу музыке короля поп-музыки.", "src": ["ГКЗ «Башкортостан»", "https://gkzbashkortostan.ru/afisha/"], "id": 23, "norm": "трибьют-шоу michael jackson"}, {"t": "Мот", "cat": "концерт", "tags": ["поп"], "ds": "2026-11-22T19:00:00+05:00", "city": "Уфа", "venue": "Дворец борьбы им. Салихова", "addr": "ул. Ленина, 114", "pmin": 4200, "pmax": null, "free": false, "age": 12, "desc": "Сольный концерт Мота.", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 24, "norm": "мот"}, {"t": "Лена Василек", "cat": "концерт", "tags": ["фолк"], "ds": "2026-11-22T18:00:00+05:00", "city": "Кумертау", "venue": "ДК Угольщиков", "addr": "", "pmin": null, "pmax": null, "free": false, "age": 12, "desc": "Концерт в Кумертау.", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 25, "norm": "лена василек"}, {"t": "Мировые хиты в рок-обработке (группа «Амбер»)", "cat": "концерт", "tags": ["рок", "симфо"], "ds": "2026-11-25T19:00:00+05:00", "city": "Уфа", "venue": "ГКЗ «Башкортостан»", "addr": "ул. Ленина, 50", "pmin": null, "pmax": null, "free": false, "age": 6, "desc": "Симфо-фолк-метал группа «Амбер» и колоратурное сопрано Татьяна Теплова.", "src": ["ГКЗ «Башкортостан»", "https://gkzbashkortostan.ru/afisha/"], "id": 26, "norm": "мировые хиты в рок-обработке (группа «амбер»)"}, {"t": "Лолита", "cat": "концерт", "tags": ["поп"], "ds": "2026-11-25T19:00:00+05:00", "city": "Уфа", "venue": "Дворец борьбы им. Салихова", "addr": "ул. Ленина, 114", "pmin": 3000, "pmax": null, "free": false, "age": 16, "desc": "Концерт Лолиты.", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 27, "norm": "лолита"}, {"t": "Турецкие сериалы", "cat": "концерт", "tags": ["поп"], "ds": "2026-11-26T19:00:00+05:00", "city": "Уфа", "venue": "ГКЗ «Башкортостан»", "addr": "ул. Ленина, 50", "pmin": 800, "pmax": null, "free": false, "age": 12, "desc": "Концерт по мотивам полюбившихся саундтреков турецких сериалов.", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 28, "norm": "турецкие сериалы"}, {"t": "И вновь о любви", "cat": "спектакль", "tags": ["драма"], "ds": "2026-11-26T14:00:00+05:00", "city": "Стерлитамак", "venue": "Стерлитамакский русский драматический театр", "addr": "", "pmin": 500, "pmax": null, "free": false, "age": 16, "desc": "Спектакль Стерлитамакского русского драмтеатра.", "src": ["Ticketland", "https://ufa.ticketland.ru/afisha/november/"], "id": 29, "norm": "и вновь о любви"}, {"t": "Вечер профессионального бокса IBA.PRO22", "cat": "другое", "tags": ["спорт"], "ds": "2026-11-27T18:00:00+05:00", "city": "Уфа", "venue": "Дворец борьбы им. Салихова", "addr": "ул. Ленина, 114", "pmin": null, "pmax": null, "free": false, "age": 12, "desc": "Профессиональный бокс турнир IBA.PRO22.", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 30, "norm": "вечер профессионального бокса iba.pro22"}, {"t": "Руки Вверх! Юбилейный тур «30 нам уже!»", "cat": "концерт", "tags": ["поп"], "ds": "2026-11-28T19:00:00+05:00", "city": "Уфа", "venue": "Уфа-Арена", "addr": "ул. Ленина, 114", "pmin": 5400, "pmax": null, "free": false, "age": 12, "desc": "Юбилейный тур легенды поп-музыки 90-х.", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 31, "norm": "руки вверх! юбилейный тур «30 нам уже!»"}, {"t": "Гарик Сукачев", "cat": "концерт", "tags": ["рок"], "ds": "2026-11-28T19:00:00+05:00", "city": "Уфа", "venue": "РК «Огни Уфы»", "addr": "", "pmin": 5300, "pmax": null, "free": false, "age": 16, "desc": "Концерт Гарика Сукачёва и «Неприкасаемых».", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 32, "norm": "гарик сукачев"}, {"t": "Гузель Уразова: «Хитлы сезон»", "cat": "концерт", "tags": ["татарский язык"], "ds": "2026-11-28T19:00:00+05:00", "city": "Уфа", "venue": "Дворец молодежи", "addr": "ул. 50-летия Октября, 21", "pmin": null, "pmax": null, "free": false, "age": 6, "desc": "Концерт Гузель Уразовой.", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 33, "norm": "гузель уразова: «хитлы сезон»"}, {"t": "Гала-концерт при свечах с органом", "cat": "концерт", "tags": ["академическая музыка"], "ds": "2026-11-29T15:00:00+05:00", "city": "Уфа", "venue": "Башкирская государственная филармония им. Х. Ахметова", "addr": "ул. Гоголя, 58", "pmin": null, "pmax": null, "free": false, "age": 6, "desc": "Вечер классической музыки при свечах с органом.", "src": ["Башгосфилармония", "https://bashgf.ru/afisha/"], "id": 34, "norm": "гала-концерт при свечах с органом"}, {"t": "Терем-теремок", "cat": "спектакль", "tags": ["дети", "кукольный театр"], "ds": "2026-11-29T12:00:00+05:00", "city": "Уфа", "venue": "Башкирский государственный театр кукол", "addr": "пр. Октября, 158", "pmin": 500, "pmax": 500, "free": false, "age": 0, "desc": "Русская народная сказка в театре кукол.", "src": ["Ticketland", "https://ufa.ticketland.ru/afisha/november/"], "id": 35, "norm": "терем-теремок"}, {"t": "Спектакль «Поздняя любовь»", "cat": "спектакль", "tags": ["драма"], "ds": "2026-11-29T19:00:00+05:00", "city": "Уфа", "venue": "УГТТ «Нур»", "addr": "ул. Правды, 20", "pmin": null, "pmax": null, "free": false, "age": 16, "desc": "Вечерний спектакль театра «Нур».", "src": ["Куда Уфа", "https://kudaufa.ru/event/all/month/"], "id": 36, "norm": "спектакль «поздняя любовь»"}, {"t": "Балет «Лебединое озеро»", "cat": "спектакль", "tags": ["балет"], "ds": "2026-11-29T19:00:00+05:00", "city": "Уфа", "venue": "Конгресс-холл «Торатау»", "addr": "ул. Заки Валиди, 2", "pmin": 1500, "pmax": null, "free": false, "age": 6, "desc": "Классический балет Чайковского в Конгресс-холле.", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 37, "norm": "балет «лебединое озеро»"}, {"t": "Зилия Бахтиева", "cat": "концерт", "tags": ["вокал", "башкирский язык"], "ds": "2026-11-30T19:00:00+05:00", "city": "Уфа", "venue": "ГКЗ «Башкортостан»", "addr": "ул. Ленина, 50", "pmin": null, "pmax": null, "free": false, "age": 6, "desc": "Концерт заслуженной артистки РБ Зилии Бахтиевой.", "src": ["ГКЗ «Башкортостан»", "https://gkzbashkortostan.ru/afisha/"], "id": 38, "norm": "зилия бахтиева"}, {"t": "Благотворительный концерт Петра Дранги", "cat": "концерт", "tags": ["аккордеон", "благотворительность"], "ds": "2026-12-04T18:00:00+05:00", "city": "Уфа", "venue": "ГКЗ «Башкортостан»", "addr": "ул. Ленина, 50", "pmin": null, "pmax": null, "free": false, "age": 0, "desc": "«Музыка, которая лечит» — благотворительный концерт.", "src": ["ГКЗ «Башкортостан»", "https://gkzbashkortostan.ru/afisha/"], "id": 39, "norm": "благотворительный концерт петра дранги"}, {"t": "Новогодняя сказка «Дед Мороз и школа богатырей»", "cat": "спектакль", "tags": ["дети", "новый год"], "ds": "2026-12-19T10:00:00+05:00", "city": "Уфа", "venue": "ГКЗ «Башкортостан»", "addr": "ул. Ленина, 50", "pmin": null, "pmax": null, "free": false, "age": 0, "desc": "Новогодняя сказка для всей семьи.", "src": ["ГКЗ «Башкортостан»", "https://gkzbashkortostan.ru/afisha/"], "id": 40, "norm": "новогодняя сказка «дед мороз и школа богатырей»"}, {"t": "«40 000 лет и зим. Долгий сон мамонтёнка Любы»", "cat": "выставка", "tags": ["музей", "дети"], "ds": "2026-11-01T10:00:00+05:00", "de": "2027-02-28T20:00:00+05:00", "city": "Уфа", "venue": "Национальный музей Республики Башкортостан", "addr": "ул. Советская, 14", "pmin": 250, "pmax": null, "free": false, "age": 0, "desc": "Выставка о мамонтятах и ледниковом периоде. Можно по Пушкинской карте.", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 41, "norm": "«40 000 лет и зим. долгий сон мамонтенка любы»"}, {"t": "Экспозиция БГХМ им. М. В. Нестерова", "cat": "выставка", "tags": ["музей", "искусство"], "ds": "2026-11-01T10:00:00+05:00", "de": "2026-12-31T20:00:00+05:00", "city": "Уфа", "venue": "Башкирский государственный художественный музей им. М. В. Нестерова", "addr": "ул. Гоголя, 103", "pmin": 200, "pmax": null, "free": false, "age": 0, "desc": "Постоянная экспозиция музея.", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 42, "norm": "экспозиция бгхм им. м. в. нестерова"}, {"t": "Владимир Винокур", "cat": "концерт", "tags": ["юмор"], "ds": "2026-11-12T19:00:00+05:00", "city": "Уфа", "venue": "ДК «Моторостроитель»", "addr": "", "pmin": null, "pmax": null, "free": false, "age": 16, "desc": "Юмористический концерт.", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 43, "norm": "владимир винокур"}, {"t": "Мари Краймбрери", "cat": "концерт", "tags": ["поп"], "ds": "2026-11-07T19:00:00+05:00", "city": "Уфа", "venue": "Дворец борьбы им. Салихова", "addr": "ул. Ленина, 114", "pmin": 3200, "pmax": null, "free": false, "age": 12, "desc": "Концерт Мари Краймбрери.", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 44, "norm": "мари краймбрери"}, {"t": "Звери", "cat": "концерт", "tags": ["рок"], "ds": "2026-11-08T20:00:00+05:00", "city": "Уфа", "venue": "Уфа-Арена", "addr": "ул. Ленина, 114", "pmin": 2500, "pmax": null, "free": false, "age": 12, "desc": "Концерт группы «Звери».", "src": ["Kassir.ru", "https://ufa.kassir.ru/category/noyabr"], "id": 45, "norm": "звери"}, {"t": "Три поросёнка", "cat": "спектакль", "tags": ["дети", "кукольный театр"], "ds": "2026-11-08T12:00:00+05:00", "city": "Уфа", "venue": "Башкирский государственный театр кукол", "addr": "пр. Октября, 158", "pmin": 500, "pmax": 500, "free": false, "age": 0, "desc": "Детская сказка на утреннике.", "src": ["Ticketland", "https://ufa.ticketland.ru/afisha/november/"], "id": 46, "norm": "три поросенка"}, {"t": "Туташ. Прерванный полёт", "cat": "спектакль", "tags": ["драма", "башкирский язык"], "ds": "2026-11-06T19:00:00+05:00", "city": "Уфа", "venue": "УГТТ «Нур»", "addr": "ул. Правды, 20", "pmin": null, "pmax": null, "free": false, "age": 16, "desc": "Спектакль об истории Сахибжамал, юной героини.", "src": ["Куда Уфа", "https://kudaufa.ru/event/all/month/"], "id": 47, "norm": "туташ. прерванный полет"}, {"t": "Александр Малинин", "cat": "концерт", "tags": ["песня"], "ds": "2026-11-13T19:00:00+05:00", "city": "Уфа", "venue": "ГКЗ «Башкортостан»", "addr": "ул. Ленина, 50", "pmin": null, "pmax": null, "free": false, "age": 6, "desc": "Концерт народного артиста России Александра Малинина.", "src": ["ГКЗ «Башкортостан»", "https://gkzbashkortostan.ru/afisha/"], "id": 48, "norm": "александр малинин"}];
+const CAT_ICON = {концерт:"🎵", спектакль:"🎭", выставка:"🖼", фестиваль:"🎪", кино:"🎬", экскурсия:"🚶", другое:"✨"};
+
+const $ = s => document.querySelector(s);
+const grid = $("#grid"), emptyEl = $("#empty"), moreBtn = $("#moreBtn");
+let PAGE = 0; let PER = 12;
+
+const params = () => new URLSearchParams(location.search);
+function setParam(k, v){ const p = params(); v ? p.set(k,v) : p.delete(k); history.replaceState(null,"",location.pathname+"?"+p.toString()+location.hash); }
+function getParam(k){ return params().get(k) || ""; }
+function fmtDate(s){
+  const d = new Date(s);
+  return d.toLocaleDateString("ru-RU",{weekday:"short",day:"numeric",month:"long"})+", "+d.toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
+}
+function priceText(e){
+  if(e.free) return "бесплатно";
+  if(e.pmin==null && e.pmax==null) return "цена не указана";
+  if(e.pmin!=null && e.pmax!=null && e.pmax!==e.pmin) return `от ${e.pmin} до ${e.pmax} ₽`;
+  return `от ${e.pmin ?? e.pmax} ₽`;
+}
+function evStart(e){ return new Date(e.ds); }
+function evEnd(e){ return e.de ? new Date(e.de) : evStart(e); }
+/* ---------- фильтры ---------- */
+const state = {q:"",city:"",cat:"",price:"",age:"",d:"",past:true,sort:"date"};
+
+function syncFromURL(){
+  state.q=getParam("q"); state.city=getParam("city"); state.cat=getParam("cat");
+  state.price=getParam("price"); state.age=getParam("age"); state.d=getParam("d");
+  state.sort=getParam("sort")||"date";
+  state.past = getParam("past")!=="0";
+}
+function pushURL(){
+  setParam("q",state.q); setParam("city",state.city); setParam("cat",state.cat);
+  setParam("price",state.price); setParam("age",state.age); setParam("d",state.d);
+  setParam("sort",state.sort==="date"?"":state.sort); setParam("past",state.past?"":"0");
+}
+function syncUI(){
+  $("#q").value=state.q; $("#city").value=state.city; $("#cat").value=state.cat;
+  $("#price").value=state.price; $("#age").value=state.age; $("#d").value=state.d; $("#sort").value=state.sort;
+  $("#past").checked=state.past;
+  document.querySelectorAll("#dateChips .chip").forEach(c=>c.classList.toggle("on", c.dataset.d===state.d && state.d!==""));
+  if(state.d && !state.d.includes("T")) document.querySelectorAll("#dateChips .chip").forEach(c=>c.classList.remove("on"));
+}
+
+function dayOf(d){ return new Date(d.getFullYear(),d.getMonth(),d.getDate()); }
+function matchDate(e, mode){
+  const s = evStart(e), end = evEnd(e);
+  const now = new Date();
+  if(mode==="today"){ return s<=endOfToday() && end>=dayOf(now); }
+  if(mode==="tomorrow"){ const t=new Date(now); t.setDate(now.getDate()+1); const T=endOfTomorrow(); return s<=T && end>=dayOf(t); }
+  if(mode==="weekend"){ const [a,b]=upcomingWeekend(); return s<=bend(b)&&end>=dayOf(a); }
+  if(mode==="week"){ const now2=dayOf(new Date()); const in7=new Date(now2); in7.setDate(in7.getDate()+7); in7.setHours(23,59,59); return s<=in7 && end>=now2; }
+  if(mode.includes("T")){ const day=new Date(mode); const a=dayOf(day); const b=new Date(a); b.setHours(23,59,59); return s<=b && end>=a; }
+  return true;
+}
+function endOfToday(){ const d=new Date(); d.setHours(23,59,59); return d; }
+function endOfTomorrow(){ const d=new Date(); d.setDate(d.getDate()+1); d.setHours(23,59,59); return d; }
+function upcomingWeekend(){
+  const n=new Date(); const dow=n.getDay(); // 0 вс, 6 сб
+  const sat=new Date(n); const toSat=(6-dow+7)%7; sat.setDate(n.getDate()+toSat);
+  const sun=new Date(sat); sun.setDate(sat.getDate()+1); sun.setHours(23,59,59);
+  sat.setHours(0,0,0,0);
+  return [sat,sun];
+}
+function bend(d){ return d; }
+function matchF(e, f){
+  if(f.q){
+    const q=f.q.toLowerCase().replace(/ё/g,"е");
+    const hay=(e.t+" "+e.venue+" "+e.city+" "+(e.desc||"")).toLowerCase().replace(/ё/g,"е");
+    if(!hay.includes(q)) return false;
+  }
+  if(f.city && e.city!==f.city) return false;
+  if(f.cat && e.cat!==f.cat) return false;
+  if(f.price){
+    if(f.price==="free"){ if(!e.free) return false; }
+    else { const lim=+f.price; const p=e.pmin ?? e.pmax; if(p==null) return false; if(e.free) return true; if(p>lim) return false; }
+  }
+  if(f.age){ if(e.age > +f.age) return false; }
+  if(f.d && !matchDate(e,f.d)) return false;
+  if(f.past===false){ if(evEnd(e) < new Date()) return false; }
+  return true;
+}
+function match(e){ return matchF(e, state); }
+
+function sortEvents(list, sort){
+  const c=[...list];
+  if(sort==="price") c.sort((a,b)=>((a.pmin??a.pmax??1e9)-(b.pmin??b.pmax??1e9)));
+  else if(sort==="title") c.sort((a,b)=>a.t.localeCompare(b.t,"ru"));
+  else c.sort((a,b)=>evStart(a)-evStart(b));
+  return c;
+}
+
+function render(){
+  const W2 = document.body.classList.contains("w2");
+  if(W2) PER = 5;
+  let list = EVENTS.filter(match);
+  if(W2) list = list.filter(e => evEnd(e) >= new Date());
+  list = sortEvents(list, state.sort);
+  const shown = list.slice(0,(PAGE+1)*PER);
+  grid.innerHTML = shown.map(cardHTML).join("");
+  $("#count").textContent = W2
+    ? `Показаны ${shown.length} из ${list.length} ${plural(list.length,"события","событий","событий")}`
+    : `Найдено: ${list.length} ${plural(list.length,"событие","события","событий")}`;
+  moreBtn.style.display = list.length>shown.length ? "block" : "none";
+  if(list.length>shown.length) moreBtn.textContent = `Показать ещё (${list.length-shown.length})`;
+  if(!list.length){
+    emptyEl.style.display="block";
+    emptyEl.innerHTML = emptyHTML(list);
+    emptyEl.querySelectorAll("button[data-clear]").forEach(b=>b.onclick=()=>{ clearOne(b.dataset.clear); });
+  } else { emptyEl.style.display="none"; }
+}
+function plural(n,a,b,c){ n%=100; if(n>=11&&n<=14)return c; if(n%10===1)return a; if(n%10>=2&&n%10<=4)return b; return c; }
+
+function emptyHTML(){
+  const opts = [
+    ["q","очистить поиск"],
+    ["d","расширить период"],
+    ["price","снять ограничение по цене"],
+    ["city","показать все города"],
+    ["age","убрать ограничение по возрасту"],
+    ["cat","показать все категории"],
+  ];
+  const counts = [];
+  for(const [k,label] of opts){
+    if(!state[k]) continue;
+    const saved=state[k]; state[k]=""; const n=EVENTS.filter(match).length; state[k]=saved;
+    if(n>0) counts.push({k,label,n});
+  }
+  counts.sort((a,b)=>b.n-a.n);
+  let html2 = `<h3>По этим ограничениям ничего не нашлось</h3>Событий с текущими фильтрами нет. Можно ослабить ограничение:`;
+  html2 += `<ul>` + counts.slice(0,3).map(o=>`<li>${o.label} — найдётся ${o.n} ${plural(o.n,"событие","события","событий")}</li>`).join("")+`</ul>`;
+  html2 += `<button class="btn btn-primary" onclick="document.getElementById('q').value='';resetAll()">Сбросить все фильтры</button>`;
+  return html2;
+}
+function clearOne(k){ state[k]=""; if(k==="d"){$("#d").value="";} pushURL(); syncUI(); PAGE=0; render(); }
+function resetAll(){
+  Object.assign(state,{q:"",city:"",cat:"",price:"",age:"",d:"",past:true,sort:"date"});
+  pushURL(); syncUI(); PAGE=0; render();
+}
+
+function cardHTML(e){
+  return `<article class="card" data-id="${e.id}" tabindex="0" role="button" aria-label="Открыть карточку: ${e.t}">
+    <div class="tags">
+      <span class="tag cat-${e.cat}">${CAT_ICON[e.cat]} ${e.cat}</span>
+      ${e.age?`<span class="tag">${e.age}+</span>`:`<span class="tag">0+</span>`}
+      ${e.free?`<span class="tag">бесплатно</span>`:""}
+    </div>
+    <h3>${esc(e.t)}</h3>
+    <div class="meta"><b>${fmtDate(e.ds)}</b>${e.de?` — до ${new Date(e.de).toLocaleDateString("ru-RU",{day:"numeric",month:"long"})}`:""}</div>
+    <div class="meta">${esc(e.city)}, ${esc(e.venue)}${e.addr?" · "+esc(e.addr):""}</div>
+    <div class="price ${e.free?"free":""}">${priceText(e)}</div>
+    <div class="card-foot"><button class="more" data-id="${e.id}">Подробнее →</button></div>
+  </article>`;
+}
+function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+/* ---------- модалка ---------- */
+function openModal(id){
+  const e = EVENTS.find(x=>x.id==id); if(!e) return;
+  const rows = [
+    ["Категория", CAT_ICON[e.cat]+" "+e.cat],
+    ["Дата", fmtDate(e.ds)+(e.de?" — до "+new Date(e.de).toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"}):"")],
+    ["Город", e.city],
+    ["Площадка", e.venue + (e.addr?" ("+e.addr+")":"")],
+    ["Цена", priceText(e)],
+    ["Возраст", (e.age||0)+"+"],
+    ["Теги", e.tags.join(", ")],
+    ["Источник", `<a href="${e.src[1]}" target="_blank" rel="noopener">${e.src[0]}</a>`],
+  ];
+  $("#modal").innerHTML = `
+    <button class="close" aria-label="Закрыть">✕</button>
+    <div class="tags"><span class="tag cat-${e.cat}">${CAT_ICON[e.cat]} ${e.cat}</span><span class="tag">${e.age||0}+</span>${e.free?'<span class="tag">бесплатно</span>':""}</div>
+    <h2>${esc(e.t)}</h2>
+    ${e.desc?`<div class="m-desc">${esc(e.desc)}</div>`:""}
+    ${rows.map(r=>`<div class="m-row"><span class="k">${r[0]}:</span><span>${r[1]}</span></div>`).join("")}
+    <div class="modal-actions">
+      <a class="btn btn-primary" href="${e.src[1]}" target="_blank" rel="noopener">Перейти к источнику / билетам ↗</a>
+    </div>`;
+  $("#overlay").classList.add("open");
+  $("#modal .close").focus();
+  document.body.style.overflow="hidden";
+}
+function closeModal(){ $("#overlay").classList.remove("open"); document.body.style.overflow=""; }
+$("#overlay").addEventListener("click", ev=>{ if(ev.target===overlay) closeModal(); });
+document.addEventListener("keydown", ev=>{ if(ev.key==="Escape") closeModal(); });
+
+grid.addEventListener("click", ev=>{
+  const more = ev.target.closest(".more"); const card = ev.target.closest(".card");
+  if(more){ openModal(more.dataset.id); return; }
+  if(card){ openModal(card.dataset.id); }
+});
+grid.addEventListener("keydown", ev=>{ if(ev.key==="Enter"){ const card=ev.target.closest(".card"); if(card) openModal(card.dataset.id); } });
+/* ---------- подписки ---------- */
+function loadSubs(){ try{ return JSON.parse(localStorage.getItem("afisha_subs")||"[]"); }catch(_){ return []; } }
+function saveSubs(s){ localStorage.setItem("afisha_subs", JSON.stringify(s)); }
+$("#subBtn").onclick = ()=>{
+  const f = {q:state.q,city:state.city,cat:state.cat,price:state.price,age:state.age,d:state.d};
+  const label = describeFilter(f);
+  if(confirm(`Подписаться на события по фильтру: ${label}?`)){
+    const subs=loadSubs(); subs.push(f); saveSubs(subs); renderSubs();
+    $("#subsBtn").textContent = `Мои подписки (${subs.length})`;
+  }
+};
+function describeFilter(f){
+  const parts=[];
+  if(f.q) parts.push(`поиск «${f.q}»`);
+  if(f.city) parts.push(f.city);
+  if(f.cat) parts.push(f.cat);
+  if(f.price) parts.push(f.price==="free"?"бесплатно":"до "+f.price+" ₽");
+  if(f.age) parts.push("для "+f.age+"+");
+  if(f.d) parts.push(f.d.includes("T")? new Date(f.d).toLocaleDateString("ru-RU") : {today:"сегодня",tomorrow:"завтра",weekend:"выходные",week:"неделя"}[f.d]||"");
+  return parts.length? parts.join(", ") : "все события";
+}
+function renderSubs(){
+  const subs=loadSubs();
+  $("#subsList").innerHTML = subs.length? subs.map((s,i)=>
+    `<div class="sub-item"><span>${describeFilter(s)}</span><span class="sp" style="flex:1"></span>
+     <button class="btn" data-un="${i}" style="padding:4px 10px">Отписаться</button></div>`).join("")
+   : `<div style="color:var(--muted);font-size:14px">Пока пусто. Нажмите «Подписаться на подборку» с настроенными фильтрами.</div>`;
+  $("#subsList").querySelectorAll("[data-un]").forEach(b=>b.onclick=()=>{
+    const subs=loadSubs(); subs.splice(+b.dataset.un,1); saveSubs(subs); renderSubs();
+    $("#subsBtn").textContent = `Мои подписки${subs.length?` (${subs.length})`:""}`;
+  });
+}
+$("#subsBtn").onclick = ()=>{
+  const p=$("#subsPanel"); const open=!p.classList.contains("open");
+  p.classList.toggle("open",open); $("#subsBtn").setAttribute("aria-expanded",open); renderSubs();
+};
+$("#shareBtn").onclick = async ()=>{
+  const btn=$("#shareBtn"); const old=btn.textContent;
+  try{ await navigator.clipboard.writeText(location.href); btn.textContent="✓ Ссылка скопирована"; }
+  catch(_){ prompt("Скопируйте ссылку:", location.href); btn.textContent="✓ Ссылка готова"; }
+  setTimeout(()=>btn.textContent=old, 1600);
+};
+/* ---------- события UI ---------- */
+$("#q").addEventListener("input", ()=>{ state.q=$("#q").value.trim(); pushURL(); PAGE=0; render(); });
+["city","cat","price","age","sort"].forEach(id=>$("#"+id).addEventListener("change",()=>{ state[id]=$("#"+id).value; pushURL(); PAGE=0; render(); }));
+$("#past").addEventListener("change",()=>{ state.past=$("#past").checked; pushURL(); PAGE=0; render(); });
+$("#d").addEventListener("change",()=>{ state.d=$("#d").value; pushURL(); PAGE=0; render(); });
+document.querySelectorAll("#dateChips .chip").forEach(c=>c.onclick=()=>{
+  state.d=c.dataset.d; $("#d").value=""; pushURL(); PAGE=0; render();
+});
+moreBtn.onclick=()=>{ PAGE++; render(); };
+
+/* ---------- витрина виджетов ---------- */
+const REDUCE = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function upcomingList(){ return EVENTS.filter(e => evEnd(e) >= new Date()).sort((a,b)=>evStart(a)-evStart(b)); }
+function fillDemo(el, list){
+  el.innerHTML = list.length ? list.map(cardHTML).join("") : `<div class="wempty">Подходящих событий нет — ослабьте фильтры.</div>`;
+}
+(function(){ const el=$("#w1grid"); if(el) fillDemo(el, upcomingList().slice(0,6)); })();
+
+const w2state={q:"",d:""};
+function w2demoRender(){
+  const el=$("#w2feed"); if(!el) return;
+  const f={q:w2state.q, d:w2state.d, past:false};
+  const all=sortEvents(EVENTS.filter(e=>matchF(e,f)),"date");
+  const list=all.slice(0,5);
+  $("#w2count").textContent=`Показаны ${list.length} из ${all.length} ${plural(all.length,"события","событий","событий")}`;
+  fillDemo(el, list);
+}
+$("#w2q").addEventListener("input",()=>{ w2state.q=$("#w2q").value.trim(); w2demoRender(); });
+$("#w2chips").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{
+  $("#w2chips").querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===c));
+  w2state.d=c.dataset.d; w2demoRender();
+});
+
+function initCarousel(root, n){
+  if(!root) return;
+  const list=upcomingList().slice(0,n||5);
+  if(!list.length){ root.innerHTML=`<div class="wempty">Подходящих событий нет.</div>`; return; }
+  root.innerHTML=`<div class="wcar"><div class="wtrack">${list.map(cardHTML).join("")}</div></div>
+    <div class="wnav"><button class="warrow" data-prev aria-label="Предыдущий слайд">‹</button><span class="wdots" aria-label="Слайды"></span><button class="warrow" data-next aria-label="Следующий слайд">›</button></div>`;
+  const track=root.querySelector(".wtrack"), dotsBox=root.querySelector(".wdots");
+  dotsBox.innerHTML=list.map((_,i)=>`<button class="wdot${i?"":" on"}" data-i="${i}" aria-label="Слайд ${i+1}"></button>`).join("");
+  let idx=0, timer=null;
+  const trackW=()=>root.querySelector(".wcar").clientWidth||track.offsetWidth;
+  const go=i=>{ idx=(i+list.length)%list.length; track.style.transform=`translateX(${-idx*100}%)`; dotsBox.querySelectorAll(".wdot").forEach((d,j)=>d.classList.toggle("on",j===idx)); };
+  root.querySelector("[data-prev]").onclick=()=>go(idx-1);
+  root.querySelector("[data-next]").onclick=()=>go(idx+1);
+  dotsBox.querySelectorAll(".wdot").forEach(d=>d.onclick=()=>go(+d.dataset.i));
+  root.tabIndex=0;
+  root.addEventListener("keydown",ev=>{ if(ev.key==="ArrowLeft")go(idx-1); if(ev.key==="ArrowRight")go(idx+1); });
+  const start=()=>{ if(!REDUCE&&!timer) timer=setInterval(()=>go(idx+1),6000); };
+  const stop=()=>{ if(timer){ clearInterval(timer); timer=null; } };
+  start();
+  root.addEventListener("mouseenter",stop);
+  root.addEventListener("mouseleave",start);
+  root.addEventListener("focusin",stop);
+  root.addEventListener("focusout",start);
+  let sx=null;
+  track.addEventListener("pointerdown",e=>{ sx=e.clientX; });
+  window.addEventListener("pointerup",e=>{ if(sx===null) return; const dx=e.clientX-sx; sx=null; if(Math.abs(dx)>40){ go(idx+(dx<0?1:-1)); } });
+}
+initCarousel($("#w3demo"),5);
+
+/* клики по карточкам в витрине открывают общую модалку */
+document.addEventListener("click", ev=>{
+  if(!ev.target.closest) return;
+  if(!ev.target.closest("#w1grid,#w2feed,#w3demo,#w3slot")) return;
+  const more=ev.target.closest(".more"); const card=ev.target.closest(".card");
+  if(more){ openModal(more.dataset.id); return; }
+  if(card){ openModal(card.dataset.id); }
+});
+
+/* ---------- init ---------- */
+const WM = params().get("widget")||"";
+if(WM==="1") document.body.classList.add("widget");
+if(WM==="2") document.body.classList.add("widget","w2");
+if(WM==="3"){ document.body.classList.add("widget","w3"); $("#w3slot").style.display="block"; }
+
+(function initSelects(){
+  const cities=[...new Set(EVENTS.map(e=>e.city))].sort((a,b)=>a.localeCompare(b,"ru"));
+  const cats=[...new Set(EVENTS.map(e=>e.cat))];
+  $("#city").insertAdjacentHTML("beforeend", cities.map(c=>`<option>${c}</option>`).join(""));
+  $("#cat").insertAdjacentHTML("beforeend", cats.map(c=>`<option>${c}</option>`).join(""));
+})();
+
+syncFromURL();
+if(WM==="2") state.past=false;
+syncUI(); PAGE=0; render(); renderSubs(); w2demoRender();
+if(WM==="3") initCarousel($("#w3slot"), Math.min(Math.max(+(params().get("n"))||5,1),8));
+</script>
+</body>
+</html>
